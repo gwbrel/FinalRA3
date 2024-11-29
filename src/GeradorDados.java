@@ -27,10 +27,10 @@ public class GeradorDados {
                     int tipoHash = tiposHash[k]; //
                     TabelaHash tabela = new TabelaHash(tamanhoTabela, tipoHash); //
 
-                    // registrar o tempo inicial em milissegundos
+                    
                     long tempoInicioInsercao = System.currentTimeMillis();
 
-                    // Inserir dados na tabela de hash
+                    // 
                     for (int m = 0; m < tamanhoConjunto; m++) {
                         String codigo = gerarCodigoAleatorio(random); //
                         tabela.inserir(new Registro(codigo)); //
@@ -68,7 +68,7 @@ public class GeradorDados {
     //
     public static String gerarCodigoAleatorio(Random random) {
         char[] codigoArray = new char[9];
-        // array para armazenar os digitos do codigo
+        // 
         for (int i = 0; i < 9; i++) {
             codigoArray[i] = (char) ('0' + random.nextInt(10)); //
         }
