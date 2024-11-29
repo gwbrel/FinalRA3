@@ -1,0 +1,88 @@
+#include "contiki.h"
+#include <stdio.h>
+#include <stdlib.h> // Para rand()
+#include <time.h>   // Para srand()
+
+// Declaração dos processos
+PROCESS(heart_rate_process, "Heart Rate Process");
+PROCESS(oxygen_saturation_process, "Oxygen Saturation Process");
+PROCESS(temperature_process, "Temperature Process");
+PROCESS(alert_process, "Alert Process");
+
+AUTOSTART_PROCESSES(&heart_rate_process, &oxygen_saturation_process, &temperature_process);
+
+// Função para gerar batimentos cardíacos aleatórios
+static int generate_heart_rate() {
+    return rand() % 121 + 20; // Gera um valor entre 20 e 140
+}
+
+// Função para gerar saturação de oxigênio aleatória
+static int generate_oxygen_saturation() {
+    return rand() % 21 + 80; // Gera um valor entre 80% e 100%
+}
+
+// Função para gerar temperatura aleatória
+static float generate_temperature() {
+    return (float)(rand() % 701 + 340) / 10; // Gera um valor entre 34.0 e 41.0
+}
+
+// Processo para monitorar batimentos cardíacos
+PROCESS_THREAD(heart_rate_process, ev, data) {
+    PROCESS_BEGIN();
+    
+    while (1) {
+        int heart_rate = generate_heart_rate();
+        printf("Batimentos cardíacos: %d bpm\n", heart_rate);
+        
+        if (heart_rate < 50) {
+            printf("Alerta: Batimento cardíaco baixo!\n");
+        } else if (heart_rate > 90) {
+            printf("Alerta: Batimento cardíaco alto!\n");
+        }
+        
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+        etimer_set(&et, CLOCK_SECOND * 3);
+    }
+    
+    PROCESS_END();
+}
+
+// Processo para monitorar saturação de oxigênio
+PROCESS_THREAD(oxygen_saturation_process, ev, data) {
+    PROCESS_BEGIN();
+    
+    while (1) {
+        int oxygen_saturation = generate_oxygen_saturation();
+        printf("Saturação de oxigênio: %d%%\n", oxygen_saturation);
+        
+        if (oxygen_saturation < 90) {
+            printf("Alerta: Saturação baixa!\n");
+        }
+        
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+        etimer_set(&et, CLOCK_SECOND * 3);
+    }
+    
+    PROCESS_END();
+}
+
+// Processo para monitorar temperatura
+PROCESS_THREAD(temperature_process, ev, data) {
+    PROCESS_BEGIN();
+    
+    while (1) {
+        float temperature = generate_temperature();
+        printf("Temperatura: %.1f °C\n", temperature);
+        
+        if (temperature < 35.0) {
+            printf("Alerta: Hipotermia!\n");
+        } else if (temperature > 37.0) {
+            printf("Alerta: Febre!\n");
+        }
+        
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+        etimer_set(&et, CLOCK_SECOND * 3);
+    }
+    
+    PROCESS_END();
+}
